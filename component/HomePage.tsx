@@ -16,7 +16,7 @@ export default function HomePage() {
             cursor: "pointer",
           }}
         >
-          View Products
+          Protected Route Products
         </button>
       </Link>
       <Link href="/login">

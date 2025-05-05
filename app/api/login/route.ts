@@ -5,38 +5,40 @@ import httpService from "@/services/http.service";
 export async function POST(req: Request) {
   try {
     const { username, password } = await req.json();
-    console.log("username: ", username, " password ", password);
-    // correctly getting the user name and password
 
-    // Proxy to DummyJSON login endpoint
+    // 1 Proxy login to backend
     const { data } = await httpService.post(
       "/auth/login",
       { username, password, expiresInMins: 30 },
-      { headers: { "Content-Type": "application/json" }, withCredentials: true }
+      {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      }
     );
-
-    console.log("data:  ", data);
-    // Correctly getting the user object
 
     const token = data.accessToken as string;
 
-    cookies().set({
-      name: "jwt",
-      value: token,
+    // 3 Set HttpOnly cookie
+    cookies().set("session_id", token, {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
       path: "/",
-      maxAge: 30 * 24 * 60,
+      maxAge: 30 * 60,
     });
 
-    return NextResponse.json({ success: true, data });
+    return NextResponse.json({ success: true });
   } catch (err: any) {
-    // Log the real error server-side for debugging
-    console.error("[API /login] Error:", err.message ?? err);
-    // Return a more helpful response to the client
+    // 4️ Forward backend errors directly when available
+    if (err.response) {
+      const { status, data } = err.response;
+      return NextResponse.json(data, { status });
+    }
+
+    // 5️ Fallback for unexpected errors
+    console.error("[API /login] Unexpected Error:", err);
     return NextResponse.json(
-      { success: false, error: err.message || "Internal error" },
+      { success: false, error: "Internal server error" },
       { status: 500 }
     );
   }

@@ -1,68 +1,69 @@
-'use client';
-
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+"use client";
+import { useState } from "react";
+import { useLogin } from "@/services/auth.service";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [user, setUser] = useState({ username: '', password: '' });
-  const [error, setError] = useState<string | null>(null);
+  const [creds, setCreds] = useState({ username: "", password: "" });
+  const { mutate, isError, error, isPending } = useLogin();
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(user),
+    mutate(creds, {
+      onSuccess: () => router.push("/products"),
     });
-
-    console.log('res: ', res);
-
-    if (res.ok) {
-      router.push('/products');
-    } else {
-      setError('Login failed');
-    }
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{ maxWidth: 400, margin: 'auto', marginTop: '40px' }}
+    <div
+      style={{
+        display: "flex",
+      }}
     >
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <input
-        placeholder="Username"
-        value={user.username}
-        onChange={(e) => setUser({ ...user, username: e.target.value })}
-        style={{
-          width: '100%',
-          marginBottom: 8,
-          color: 'black',
-          padding: '2px',
-          outline: 'none',
-        }}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={user.password}
-        onChange={(e) => setUser({ ...user, password: e.target.value })}
-        style={{
-          width: '100%',
-          marginBottom: 8,
-          color: 'black',
-          padding: '2px',
-          outline: 'none',
-        }}
-      />
-      <button
-        type="submit"
-        style={{ width: '100%', border: '2px solid red', padding: '2px' }}
-      >
-        Login
-      </button>
-    </form>
+      <form onSubmit={handleSubmit} style={{ maxWidth: 320, margin: "20px" }}>
+        <input
+          name="username"
+          autoComplete="username"
+          placeholder="Username"
+          value={creds.username}
+          onChange={(e) => setCreds({ ...creds, username: e.target.value })}
+          style={{
+            width: "100%",
+            marginBottom: 8,
+            color: "black",
+            padding: "2px",
+            outline: "none",
+          }}
+        />
+        <input
+          name="password"
+          type="password"
+          autoComplete="current-password"
+          placeholder="Password"
+          value={creds.password}
+          onChange={(e) => setCreds({ ...creds, password: e.target.value })}
+          style={{
+            width: "100%",
+            marginBottom: 8,
+            color: "black",
+            padding: "2px",
+            outline: "none",
+          }}
+        />
+        <button
+          type="submit"
+          disabled={isPending}
+          style={{ width: "100%", border: "2px solid red", padding: "2px" }}
+        >
+          {isPending ? "Logging in…" : "Login"}
+        </button>
+        {isError && <p style={{ color: "red" }}>{(error as Error).message}</p>}
+      </form>
+      <div>
+        <h1>test username: emilys</h1>
+        <h1>test password: emilyspass</h1>
+      </div>
+    </div>
   );
 }

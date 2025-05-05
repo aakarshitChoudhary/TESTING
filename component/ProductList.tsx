@@ -3,41 +3,35 @@ import { useProducts, useQuotes } from "@/services/product.service";
 
 export default function ProductList() {
   const { data, isLoading, error } = useProducts();
-  const { data: quotesData, isLoading: quotesLoading } = useQuotes();
+  const {
+    data: quotesData,
+    isLoading: quotesLoading,
+    error: qError,
+  } = useQuotes();
 
   if (isLoading || quotesLoading)
     return <div className="p-4">Loading products...</div>;
 
-  if (error) return <div className="p-4">Error loading products</div>;
+  if (error) return <div className="p-4">Fall Back UI</div>;
 
   const productList = data?.products;
   const quotes = quotesData?.quotes;
 
-  const allCookies = document.cookie;
-  console.log("allCookies: ", allCookies);
-
   return (
     <div>
       <div style={{ margin: "16px 0" }}>
-        <ol>
-          {quotes &&
-            quotes
-              ?.slice(0, 1)
-              ?.map((item: { id: number; quotes: string; author: string }) => (
-                <li
-                  key={item.id + item.author}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    padding: "18px",
-                  }}
-                >
-                  <blockquote>
-                    "{quotes[0].quote}" — {quotes[0].author}
-                  </blockquote>
-                </li>
-              ))}
-        </ol>
+        {qError ? (
+          <div>
+            <p>Could not load quotes.</p>
+          </div>
+        ) : (
+          quotes &&
+          quotes.slice(0, 1).map((q) => (
+            <blockquote key={q.id}>
+              "{q.quote}" — {q.author}
+            </blockquote>
+          ))
+        )}
       </div>
       <div
         className="p-4"
