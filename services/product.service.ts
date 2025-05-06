@@ -3,7 +3,7 @@ import axios from "axios";
 
 // 1️⃣ Service functions
 export async function getProducts() {
-  const { data } = await axios.get<{ products: any[] }>("/api/product");
+  const { data } = await axios.get<{ products: any[] }>("/api/products");
   return data;
 }
 export async function getQuotes() {
