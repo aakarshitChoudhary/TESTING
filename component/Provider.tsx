@@ -1,17 +1,17 @@
-'use client';
+"use client";
 import {
   isServer,
   QueryClient,
   QueryClientProvider,
-} from '@tanstack/react-query';
+} from "@tanstack/react-query";
 
 // Create a new QueryClient with a default staleTime (60 seconds)
 function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        // With SSR, we set a staleTime to avoid refetching immediately on the client&#8203;:contentReference[oaicite:0]{index=0}.
-        staleTime: 60 * 1000,
+        // With SSR, we set a staleTime to avoid refetching immediately on the client
+        staleTime: 5 * 60 * 1000,
       },
     },
   });

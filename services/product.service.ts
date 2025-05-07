@@ -1,11 +1,12 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import axios from "axios";
 
-// 1️⃣ Service functions
+// 1️⃣ Service functionscl
 export async function getProducts() {
   const { data } = await axios.get<{ products: any[] }>("/api/products");
   return data;
 }
+
 export async function getQuotes() {
   const { data } = await axios.get<{ quotes: any[] }>("/api/quotes");
   return data;
@@ -19,6 +20,7 @@ export function useProducts(): UseQueryResult<{ products: any[] }, Error> {
     retry: false,
   });
 }
+
 export function useQuotes(): UseQueryResult<{ quotes: any[] }, Error> {
   return useQuery({
     queryKey: ["quotes"],
