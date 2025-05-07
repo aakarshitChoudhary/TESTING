@@ -1,6 +1,5 @@
 // src/services/auth.service.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import httpService from "./http.service";
 import axios from "axios";
 
 interface Credentials {
@@ -26,9 +25,5 @@ export function useLogin() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: loginFn,
-    onSuccess: () => {
-      // Invalidate user-dependent caches
-      // qc.invalidateQueries(["user"]);
-    },
   });
 }
