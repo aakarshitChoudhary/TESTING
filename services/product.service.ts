@@ -1,15 +1,17 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import axios from "axios";
+import httpServiceClient from "./http.service-1";
 
-// 1️⃣ Service functionscl
+// 1️⃣ Service function
 export async function getProducts() {
-  const { data } = await axios.get<{ products: any[] }>("/api/products");
-  return data;
+  const response = await httpServiceClient.get("/api/products");
+  console.log("response: prod", response);
+  return response.data;
 }
 
 export async function getQuotes() {
-  const { data } = await axios.get<{ quotes: any[] }>("/api/quotes");
-  return data;
+  const response = await httpServiceClient.get("/api/quotes");
+  console.log("response: quote", response);
+  return response.data;
 }
 
 // 2️⃣ Hooks with inline error handling

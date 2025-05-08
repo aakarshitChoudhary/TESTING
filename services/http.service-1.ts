@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "https://dummyjson.com",
+  baseURL: "http://localhost:3000",
   timeout: 10000,
   withCredentials: true,
 });
@@ -15,17 +15,15 @@ const configure = () => {
       if (error.response) {
         // When the response has a non-2xx status code
         const { status, data } = error.response;
-        return Promise.reject(
-          new Error(`${status}: ${data?.errors[0]?.message}`)
-        );
+        return Promise.reject(new Error(`${status}: ${data.error}`));
       }
       // For network errors (no response from server)
-      return Promise.reject(new Error(`Network error: ${error.message}`));
+      return Promise.reject(new Error(`Network error: ${error.status}`));
     }
   );
 };
 
 configure();
 
-const httpService = axiosInstance;
-export default httpService;
+const httpServiceClient = axiosInstance;
+export default httpServiceClient;
